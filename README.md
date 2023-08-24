@@ -4,7 +4,10 @@
     - This Docker-Compose Running using Ubuntu 20.04
     - Install Docker Engine Version 23.0.2 or Latest
     Docs Docker : https://docs.docker.com/engine/install/ubuntu/
-#
+
+## Setup docker-compose.yml
+    - in docker-compose.yml change {directory} in your folder.
+    - Example : /root/testnet/PoA or your custom folder
 
 <h3 align="center">This Setup Geth Ethereum Using PoA and Docker Compose</h3>
 
