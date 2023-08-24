@@ -1,7 +1,8 @@
-<h3 align="center">A passionate frontend developer from India</h3>
+<h3 align="center">This Setup Geth Ethereum Using PoA and Docker Compose</h3>
 
-<h3 align="left">Connect with me:</h3>
+<h3 align="left">First Install</h3>
 <p align="left">
+- Docker Version : 23.0.2 or Latest
 </p>
 
 <h3 align="left">Languages and Tools:</h3>
