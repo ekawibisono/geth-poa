@@ -1,0 +1,117 @@
+version: "3.9"
+services:
+  geth-genesis-bootnode:
+    container_name: geth-genesis-bootnode
+    image: "ethereum/client-go:latest"
+    volumes:
+      - /root/testnet/{directory}:/PoA
+      - /root/testnet/{directory}/bootnode:/bootnode
+    command: --datadir /bootnode init /PoA/genesis.json
+  geth-genesis-node1:
+    container_name: geth-genesis-node1
+    image: "ethereum/client-go:latest"
+    volumes:
+      - /root/testnet/{directory}:/PoA
+      - /root/testnet/{directory}/node-1:/node1
+    command: --datadir /node1 init /PoA/genesis.json
+  geth-genesis-node2:
+    container_name: geth-genesis-node2
+    image: "ethereum/client-go:latest"
+    volumes:
+      - /root/testnet/{directory}:/PoA
+      - /root/testnet/{directory}/node-2:/node2
+    command: --datadir /node2 init /PoA/genesis.json
+  geth-bootnode:
+    container_name: geth-bootnode
+    image: "ethereum/client-go:latest"
+    command:
+      - --datadir=/bootnode
+      - --nodekey=/bootnode/boot.key
+      - --nodiscover
+      - --networkid=12120
+      - --port=30305
+      - --identity=Bootnode
+      - --verbosity=5
+      - --syncmode=full
+      - --authrpc.port=8553
+      - --snapshot=false
+    volumes:
+      - /root/testnet/{directory}/bootnode:/bootnode
+    ports:
+      - 30305:30305
+      - 8553:8553
+    depends_on:
+      - geth-genesis-bootnode
+  geth-node1:
+    container_name: geth-node1
+    image: "ethereum/client-go:latest"
+    command:
+      - --networkid=12120
+      - --http
+      - --http.api=eth,txpool,debug,web3,net,personal,engine
+      - --http.addr=0.0.0.0
+      - --http.corsdomain=*
+      - --http.port=9545
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.port=9455
+      - --ws.origins=*
+      - --ws.api=eth,txpool,debug,web3,net,personal
+      - --authrpc.vhosts=*
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.port=8551
+      - --authrpc.jwtsecret=/node1/jwtsecret
+      - --bootnodes=enode://4eeed1a5b3517d23a3fac2cac6c9c7ec84412c79378e2d08feab7bf34a174bef316bfb73f3b435845d79fea2d4530836476ec3c1f937b504081a3d3e5d322f72@geth-bootnode:30305
+      - --mine
+      - --miner.gasprice=1000000000
+      - --miner.etherbase=0xba1db76c30f55afd7642b9ca5800d7e5e5ae06ba
+      - --datadir=/node1
+      - --allow-insecure-unlock
+      - --unlock=0xba1db76c30f55afd7642b9ca5800d7e5e5ae06ba
+      - --password=/node1/password.txt
+      - --syncmode=full
+    ports:
+      - 8551:8551
+      - 9545:9545
+      - 9455:9455
+    volumes:
+      - /root/testnet/{directory}/node-1:/node1
+    depends_on:
+      - geth-genesis-node1
+  geth-node2:
+    container_name: geth-node2
+    image: "ethereum/client-go:latest"
+    command:
+      - --networkid=12120
+      - --http
+      - --http.api=eth,txpool,debug,web3,net,personal,engine
+      - --http.addr=0.0.0.0
+      - --http.corsdomain=*
+      - --http.port=9546
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.port=9456 
+      - --ws.origins=*
+      - --ws.api=eth,txpool,debug,web3,net,personal
+      - --authrpc.vhosts=*
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.port=8552
+      - --authrpc.jwtsecret=/node1/jwtsecret
+      - --bootnodes=enode://4eeed1a5b3517d23a3fac2cac6c9c7ec84412c79378e2d08feab7bf34a174bef316bfb73f3b435845d79fea2d4530836476ec3c1f937b504081a3d3e5d322f72@geth-bootnode:30305
+      - --mine
+      - --miner.gasprice=1000000000
+      - --miner.etherbase=0x804fc452E1e1879Fe7Da6C66790cD21592b2DE65
+      - --datadir=/node2
+      - --allow-insecure-unlock
+      - --unlock=0x804fc452E1e1879Fe7Da6C66790cD21592b2DE65
+      - --password=/node2/password.txt
+      - --syncmode=full
+    ports:
+      - 8552:8552  # Different port for the second node
+      - 9546:9546  # Different port for the second node
+      - 9456:9456  # Different port for the second node
+    volumes:
+      - /root/testnet/{directory}/node-1:/node1
+      - /root/testnet/{directory}/node-2:/node2
+    depends_on:
+      - geth-genesis-node2
