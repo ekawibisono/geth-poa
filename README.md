@@ -1,4 +1,4 @@
-# This Setup Geth Ethereum using PoA and Docker Compose
+# This Setup Private Geth Ethereum using PoA and Docker Compose
 
 ## Step 1 First Install
     - This Docker-Compose Running using Ubuntu 20.04
